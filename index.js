@@ -13,15 +13,31 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var Weapon = /** @class */ (function () {
+    function Weapon(name) {
+        var _this = this;
+        this.getName = function () {
+            return _this.name;
+        };
+        this.getDamage = function () {
+            return _this.damage;
+        };
+        this.name = name;
+        this.damage = 50;
+    }
+    return Weapon;
+}());
 var Hero = /** @class */ (function () {
     function Hero(name, power, life) {
         var _this = this;
         this.isAlive = function () {
             if (_this.life > 0) {
                 console.log("".concat(_this.name, " est vivant ! Il lui reste ").concat(_this.life, " points de vie."));
+                return true;
             }
             else {
                 console.log("RIP ".concat(_this.name, "."));
+                return false;
             }
         };
         this.name = name;
@@ -29,20 +45,10 @@ var Hero = /** @class */ (function () {
         this.life = life;
     }
     Hero.prototype.attack = function (opponent) {
-        opponent.life -= this.power;
-        console.log("".concat(this.name, " a attaqu\u00E9 ").concat(opponent.name, " et lui a inflig\u00E9 ").concat(this.power, " points de d\u00E9gats"));
+        opponent.life -= (this.power + this.weapon.getDamage());
+        console.log("".concat(this.name, " a attaqu\u00E9 ").concat(opponent.name, " et lui a inflig\u00E9 ").concat(this.power + this.weapon.getDamage(), " points de d\u00E9gats"));
     };
     return Hero;
-}());
-var Weapon = /** @class */ (function () {
-    function Weapon(name) {
-        var _this = this;
-        this.getName = function () {
-            return _this.name;
-        };
-        this.name = name;
-    }
-    return Weapon;
 }());
 var HeroAxe = /** @class */ (function (_super) {
     __extends(HeroAxe, _super);
@@ -53,8 +59,8 @@ var HeroAxe = /** @class */ (function (_super) {
     }
     HeroAxe.prototype.attack = function (opponent) {
         if (opponent.weapon.getName() === "Sword") {
-            opponent.life -= (this.power * 2);
-            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat(this.power * 2, " points de d\u00E9gats!"));
+            opponent.life -= ((this.power * 2) + this.weapon.getDamage());
+            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat((this.power * 2) + this.weapon.getDamage(), " points de d\u00E9gats!"));
         }
         else {
             _super.prototype.attack.call(this, opponent);
@@ -71,8 +77,8 @@ var HeroSword = /** @class */ (function (_super) {
     }
     HeroSword.prototype.attack = function (opponent) {
         if (opponent.weapon.getName() === "Spear") {
-            opponent.life -= (this.power * 2);
-            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat(this.power * 2, " points de d\u00E9gats!"));
+            opponent.life -= ((this.power * 2) + this.weapon.getDamage());
+            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat((this.power * 2) + this.weapon.getDamage(), " points de d\u00E9gats!"));
         }
         else {
             _super.prototype.attack.call(this, opponent);
@@ -89,8 +95,8 @@ var HeroSpear = /** @class */ (function (_super) {
     }
     HeroSpear.prototype.attack = function (opponent) {
         if (opponent.weapon.getName() === "Axe") {
-            opponent.life -= (this.power * 2);
-            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat(this.power * 2, " points de d\u00E9gats!"));
+            opponent.life -= ((this.power * 2) + this.weapon.getDamage());
+            console.log("Les d\u00E9gats sont doubl\u00E9s ! Le h\u00E9ros a inflig\u00E9 ".concat((this.power * 2) + this.weapon.getDamage(), " points de d\u00E9gats!"));
         }
         else {
             _super.prototype.attack.call(this, opponent);
@@ -98,14 +104,26 @@ var HeroSpear = /** @class */ (function (_super) {
     };
     return HeroSpear;
 }(Hero));
-var jon = new Hero("Jon", 50, 70);
-var daenerys = new Hero("Daenerys", 100, 50);
-var lance = new HeroSpear("Lance", 50, 100);
-var epee = new HeroSword("Epée", 50, 100);
-var hache = new HeroAxe("Hache", 50, 100);
-jon.attack(daenerys);
-daenerys.isAlive();
-console.log("Hache attaque lance");
-hache.attack(lance);
-console.log("Hache attaque épée");
-hache.attack(epee);
+var lance = new HeroSpear("Lance", 70, 110);
+var epee = new HeroSword("Epée", 50, 130);
+var hache = new HeroAxe("Hache", 30, 160);
+var isBothAlive = true;
+while (isBothAlive) {
+    epee.attack(hache);
+    hache.attack(epee);
+    var livingEpee = epee.isAlive();
+    var livingHache = hache.isAlive();
+    if (!livingHache || !livingEpee) {
+        isBothAlive = false;
+        console.log("Le combat est terminé");
+        if (!livingHache && !livingEpee) {
+            console.log("Les deux sont morts");
+        }
+        else if (!livingEpee && livingHache) {
+            console.log("Hache est le survivant avec ".concat(hache.life, " points de vie"));
+        }
+        else {
+            console.log("Ep\u00E9e est le survivant avec ".concat(epee.life, " points de vie"));
+        }
+    }
+}
