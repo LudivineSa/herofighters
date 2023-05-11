@@ -8,7 +8,7 @@ class Weapon {
     }
 
     public getName = () => {
-        return this.name; 
+        return this.name;
     }
 
     public getDamage = () => {
@@ -16,25 +16,28 @@ class Weapon {
     }
 }
 
-class Hero {
+// ça serait bien de rendre la classe Hero asbtraite pour
+// éviter qu'un⋅e dev en créé des instance
+abstract class Hero {
     private name: string;
-    protected power : number;
+    protected power: number;
     public life: number;
-    public weapon: Weapon;
+    // si weapon est abstract, ça oblige les classe héritée à lui donner une valeur
+    public abstract weapon: Weapon;
 
-    constructor (name: string, power : number, life: number) {
+    constructor(name: string, power: number, life: number) {
         this.name = name;
         this.power = power;
         this.life = life;
     }
 
-    public attack (opponent: Hero) : void {
+    public attack(opponent: Hero): void {
         opponent.life -= (this.power + this.weapon.getDamage());
         console.log(`${this.name} a attaqué ${opponent.name} et lui a infligé ${this.power + this.weapon.getDamage()} points de dégats`)
     }
 
-    public isAlive = () : boolean => {
-        if(this.life > 0){
+    public isAlive = (): boolean => {
+        if (this.life > 0) {
             console.log(`${this.name} est vivant ! Il lui reste ${this.life} points de vie.`)
             return true;
         } else {
@@ -44,15 +47,18 @@ class Hero {
     }
 }
 
+// ça serait top de créer un fichier par classe, ex: Hero.js, HeroAxe.js, etc...
 class HeroAxe extends Hero {
-    
+
+    public weapon: Weapon;
+
     constructor(name: string, power: number, life: number) {
         super(name, power, life)
         this.weapon = new Weapon("Axe")
     }
-    
 
-    attack  (opponent: Hero) {
+
+    attack(opponent: Hero) {
         if (opponent.weapon.getName() === "Sword") {
             opponent.life -= ((this.power * 2) + this.weapon.getDamage())
             console.log(`Les dégats sont doublés ! Le héros a infligé ${(this.power * 2) + this.weapon.getDamage()} points de dégats!`)
@@ -63,13 +69,15 @@ class HeroAxe extends Hero {
 }
 
 class HeroSword extends Hero {
-    
+
+    public weapon: Weapon;
+
     constructor(name: string, power: number, life: number) {
         super(name, power, life)
         this.weapon = new Weapon("Sword")
     }
 
-    attack  (opponent: Hero) {
+    attack(opponent: Hero) {
         if (opponent.weapon.getName() === "Spear") {
             opponent.life -= ((this.power * 2) + this.weapon.getDamage())
             console.log(`Les dégats sont doublés ! Le héros a infligé ${(this.power * 2) + this.weapon.getDamage()} points de dégats!`)
@@ -81,13 +89,16 @@ class HeroSword extends Hero {
 }
 
 class HeroSpear extends Hero {
+
+    public weapon: Weapon;
+
     constructor(name: string, power: number, life: number) {
         super(name, power, life)
         this.weapon = new Weapon("Spear")
     }
-    
 
-    attack  (opponent: Hero) {
+
+    attack(opponent: Hero) {
         if (opponent.weapon.getName() === "Axe") {
             opponent.life -= ((this.power * 2) + this.weapon.getDamage())
             console.log(`Les dégats sont doublés ! Le héros a infligé ${(this.power * 2) + this.weapon.getDamage()} points de dégats!`)
@@ -95,7 +106,7 @@ class HeroSpear extends Hero {
             super.attack(opponent)
         }
     }
- }
+}
 
 const lance = new HeroSpear("Lance", 70, 110);
 const epee = new HeroSword("Epée", 50, 130);
@@ -109,10 +120,10 @@ while (isBothAlive) {
 
     let livingEpee = epee.isAlive();
     let livingHache = hache.isAlive()
-    if(!livingHache || !livingEpee) {
-        isBothAlive= false;
+    if (!livingHache || !livingEpee) {
+        isBothAlive = false;
         console.log("Le combat est terminé")
-        if(!livingHache && !livingEpee) {
+        if (!livingHache && !livingEpee) {
             console.log("Les deux sont morts")
         } else if (!livingEpee && livingHache) {
             console.log(`Hache est le survivant avec ${hache.life} points de vie`)
